@@ -23,4 +23,4 @@ A lightweight, modular PowerShell script designed to streamline, debloat, and op
 To run the latest version directly:
 
 ```powershell
-iex (irm "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/optimize.ps1")
+iex (irm "https://raw.githubusercontent.com/esicera/Windows11OptimizationScript/main/optimize.ps1")
