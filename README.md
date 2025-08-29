@@ -4,7 +4,7 @@ A lightweight, modular PowerShell script designed to streamline, debloat, and op
 
 ---
 
-## ⚡ Features (Planned or Included)
+## ⚡ Features
 
 Privacy: It disables system telemetry, location tracking, Cortana, and background apps. It also changes Microsoft Edge's privacy settings.
 
