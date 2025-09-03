@@ -6,7 +6,7 @@
     Thahmid
 
 .VERSION
-    1.2
+    1.4
 #>
 
 
@@ -31,7 +31,8 @@ Write-Host "I AM NOT responsible for any damage or data loss that may occur." -F
 Write-Host ""
 Write-Host "It is STRONGLY RECOMMENDED that you create a System Restore Point" -ForegroundColor Cyan
 Write-Host "before proceeding with these optimizations." -ForegroundColor Cyan
-Write-Host "What on mars are you doing!"
+Write-Host ""
+Write-Host "LETS TAKE THEM TO THE WASTELAND"-ForegroundColor Red
 Write-Host ""
 $UserInput = Read-Host "Press ENTER to continue, or 'N' to exit"
 
@@ -184,7 +185,9 @@ function Remove-Bloatware {
         "Microsoft.YourPhone", "Microsoft.WindowsMaps", "Microsoft.WindowsFeedbackHub",
         "Microsoft.ZuneMusic", "Microsoft.ZuneVideo", "SpotifyAB.SpotifyMusic", "Netflix.Netflix",
         "Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.BingFinance",
-        "microsoft.windowscommunicationsapps", "Microsoft.SkypeApp"
+        "microsoft.windowscommunicationsapps", "Microsoft.SkypeApp", "5A894077.McAfeeSecurity_2.1.27.0_x64__wafk5atnkzcwy", "5A894077.McAfeeSecurity", "RealtimeboardInc.RealtimeBoard",
+        "MirametrixInc.GlancebyMirametrix", "Microsoft.Teams", "Microsoft.SkypeApp", "Microsoft.Print3D", "Microsoft.People", "Disney.37853FC22B2CE", "C27EB4BA.DropboxOEM*",
+        "*CandyCrush*", "*BubbleWitch3Saga*", "MSTeams", "*Microsoft.MicrosoftStickyNotes*"
     )
     foreach ($AppName in $BloatwareList) {
         Write-Host "Attempting to remove: $AppName" -ForegroundColor White
@@ -192,7 +195,7 @@ function Remove-Bloatware {
             Get-AppxPackage -AllUsers -Name $AppName | Remove-AppxPackage -AllUsers -ErrorAction Stop
             Write-Host "Successfully removed $AppName." -ForegroundColor Green
         }
-        catch { Write-Host "Could not remove $AppName. It might not be installed." -ForegroundColor Yellow }
+        catch { Write-Host "Could not remove $AppName. It might not be installed. GULPPPP" -ForegroundColor Yellow }
     }
     Write-Host "Bloatware removal process finished." -ForegroundColor Green
 }
@@ -206,7 +209,7 @@ function Clear-TemporaryFiles {
             Get-ChildItem -Path "$Folder\*" -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction Stop
             Write-Host "Successfully cleaned $Folder." -ForegroundColor Green
         }
-        catch { Write-Host "Could not clean $Folder completely. Some files may be in use." -ForegroundColor Yellow }
+        catch { Write-Host "Could not clean $Folder completely. Some files may be in use. Now go plant the spike bro" -ForegroundColor Yellow }
     }
     Write-Host "Temporary file cleanup finished." -ForegroundColor Green
 }
@@ -229,13 +232,77 @@ function Set-ManualServices {
     Write-Host "Service startup types have been configured." -ForegroundColor Green
 }
 
+function Disable-ScheduledTasks {
+    Write-Host "Disabling non-essential scheduled tasks..." -ForegroundColor Cyan
+    $TasksToDisable = @(
+        "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
+        "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
+        "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip",
+        "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
+    )
+    foreach ($TaskPath in $TasksToDisable) {
+        try {
+            Get-ScheduledTask -TaskPath $TaskPath | Disable-ScheduledTask -ErrorAction Stop
+            Write-Host "Disabled task: $TaskPath" -ForegroundColor Green
+        }
+        catch {
+            Write-Host "Could not disable task: $TaskPath (It may not exist)." -ForegroundColor Yellow
+        }
+    }
+    Write-Host "Scheduled tasks have been configured." -ForegroundColor Green
+}
+
+function Clear-SystemCache {
+    Write-Host "Clearing system caches..." -ForegroundColor Cyan
+    
+    Write-Host "Flushing DNS cache..." -ForegroundColor White
+    ipconfig /flushdns
+    
+    Write-Host "System caches have been cleared." -ForegroundColor Green
+}
+
+function Tweak-ContextMenu {
+    Write-Host "Cleaning up the context menu..." -ForegroundColor Cyan
+    $ContextMenuPaths = @(
+        "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked",
+        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked"
+    )
+    $ItemsToBlock = @(
+        "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}", # Share
+        "{E2BF9676-5F8F-435C-97EB-11607A5BEDF7}", # 3D Print
+        "{F86FA3AB-70D2-4FC7-9C99-FCBF0596D6AF}"  # Cast to Device
+    )
+    foreach ($path in $ContextMenuPaths) {
+        if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
+        foreach ($item in $ItemsToBlock) {
+            Set-ItemProperty -Path $path -Name $item -Value "" -Type String -Force
+        }
+    }
+    Write-Host "Context menu has been tweaked. Restart explorer.exe to see changes." -ForegroundColor Green
+}
+
+function Disable-CpuParking {
+    Write-Host "Disabling CPU Core Parking..." -ForegroundColor Cyan
+    $SubGroup = "54533251-82be-4824-96c1-47b60b740d00" # Processor power management
+    $Setting = "0cc5b647-c1df-4637-891a-dec35c318583"  # Processor performance core parking min cores
+    powercfg /setacvalueindex SCHEME_CURRENT $SubGroup $Setting 100
+    powercfg /setdcvalueindex SCHEME_CURRENT $SubGroup $Setting 100
+    powercfg /setactive SCHEME_CURRENT
+    
+    Write-Host "CPU Core Parking has been disabled." -ForegroundColor Green
+}
+
+
+
 
 Write-Host "Starting Windows 11 Optimization..." -ForegroundColor Magenta
+Write-Host "LETS TAKE THEM TO THE WASTELANDDD!" -ForegroundColor Red
 
 Disable-Telemetry
 Disable-SysMain
 Set-EdgePrivacy
 Optimize-Win32Priority
+Disable-CpuParking
 Disable-Geolocation
 Disable-MouseAcceleration
 Apply-RegistryTweaks
@@ -248,7 +315,12 @@ Disable-Cortana
 Remove-Bloatware
 Clear-TemporaryFiles
 Set-ManualServices
+Disable-ScheduledTasks
+Tweak-ContextMenu
+Clear-SystemCache
 
-Write-Host "All tweaks have been applied, Restart or I will brimstone ult u" -ForegroundColor Magenta
+
+Write-Host "All tweaks have been applied, Restart or brimstone will open YOUR sky." -ForegroundColor Magenta
+Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 Read-Host "Press Enter to close"
