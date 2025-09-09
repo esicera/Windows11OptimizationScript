@@ -4,16 +4,17 @@ A lightweight, modular PowerShell script designed to streamline, debloat, and op
 
 ---
 
+![meow](https://github.com/esicera/Windows11OptimizationScript/blob/main/kira%20kira%20beam.gif)
+
 ## ⚡ Features
 
-Privacy: It disables system telemetry, location tracking, Cortana, and background apps. It also changes Microsoft Edge's privacy settings.
+Privacy & Debloating: Disables system telemetry, location tracking, and Cortana. It removes a long list of pre-installed bloatware apps and completely uninstalls OneDrive. It also tightens Microsoft Edge's privacy settings to reduce tracking.
 
-Performance: It disables non-essential services (SysMain, Prefetch), sets the power plan to "Ultimate Performance," prioritizes CPU resources for active applications, disables mouse acceleration, and speeds up UI animations.
+Performance & Gaming: Disables non-essential services like SysMain (Superfetch), sets the power plan to Ultimate Performance, and optimizes CPU scheduling for foreground apps. Includes advanced network optimizations to disable throttling, lower gaming latency by optimizing TCP/IP (disabling Nagle's Algorithm), and configure advanced adapter properties for maximum throughput.
 
-Debloating & UI: It removes a curated list of pre-installed bloatware apps, restores the classic Windows 10 right-click menu, and cleans up File Explorer by hiding recent files and showing hidden items/extensions.
+UI & Customization: Restores the classic Windows 10 right-click menu, disables mouse acceleration, and speeds up UI animations. It also adds a powerful "Take Ownership" command to the context menu for easy file permission changes and cleans up File Explorer for a minimalist look.
 
-Cleanup & Network: It permanently deletes temporary files and prefetch data. It also switches your DNS to Cloudflare's faster servers for better browsing speed.
-
+System & Cleanup: Clears all temporary files, prefetch data, and flushes the DNS cache to resolve potential issues. It also switches your DNS to Cloudflare's faster servers (1.1.1.1) for improved browsing speed.
 ---
 
 ## 🚀 Quick Start
