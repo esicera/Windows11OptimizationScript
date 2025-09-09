@@ -11,11 +11,11 @@
 
 
 # Ensure the script is running as Administrator
-Write-Host "Checking for administrative privileges..." -ForegroundColor Yellow
+Write-Host "Checking for administrative privileges!!" -ForegroundColor Yellow
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Host "Administrator privileges are required to run this script." -ForegroundColor Red
     Write-Host "Please re-run this script as an Administrator." -ForegroundColor Red
-    Read-Host "Press Enter to exit..."
+    Read-Host "Press Enter to exit!!"
     exit
 }
 Write-Host "Successfully running with administrative privileges." -ForegroundColor Green
@@ -38,7 +38,7 @@ $UserInput = Read-Host "Press ENTER to continue, or 'N' to exit"
 
 if ($UserInput -eq 'n' -or $UserInput -eq 'N') {
     Write-Host "Script execution cancelled by user." -ForegroundColor Red
-    Read-Host "Press Enter to close this window..."
+    Read-Host "Press Enter to close this window!!"
     exit
 }
 
@@ -46,11 +46,11 @@ if ($UserInput -eq 'n' -or $UserInput -eq 'N') {
 
 
 function Disable-Telemetry {
-    Write-Host "Disabling Telemetry and Data Collection..." -ForegroundColor Cyan
+    Write-Host "Disabling Telemetry and Data Collection!!" -ForegroundColor Cyan
     $RegistryPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"
     if (-not (Test-Path $RegistryPath)) { New-Item -Path $RegistryPath -Force | Out-Null }
     Set-ItemProperty -Path $RegistryPath -Name "AllowTelemetry" -Value 0 -Type DWord -Force
-    Write-Host "Disabling telemetry services..." -ForegroundColor Cyan
+    Write-Host "Disabling telemetry services!!" -ForegroundColor Cyan
     sc.exe config DiagTrack start= disabled
     sc.exe stop DiagTrack
     sc.exe config dmwappushservice start= disabled
@@ -59,14 +59,14 @@ function Disable-Telemetry {
 }
 
 function Disable-SysMain {
-    Write-Host "Disabling SysMain (Superfetch)..." -ForegroundColor Cyan
+    Write-Host "Disabling SysMain (Superfetch)!!" -ForegroundColor Cyan
     sc.exe config SysMain start= disabled
     sc.exe stop SysMain
     Write-Host "SysMain has been disabled." -ForegroundColor Green
 }
 
 function Set-EdgePrivacy {
-    Write-Host "Configuring Microsoft Edge privacy settings..." -ForegroundColor Cyan
+    Write-Host "Configuring Microsoft Edge privacy settings!!" -ForegroundColor Cyan
     $EdgeRegistryPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"
     if (-not (Test-Path $EdgeRegistryPath)) { New-Item -Path $EdgeRegistryPath -Force | Out-Null }
     Set-ItemProperty -Path $EdgeRegistryPath -Name "TrackingPrevention" -Value 2 -Type DWord -Force
@@ -77,21 +77,21 @@ function Set-EdgePrivacy {
 }
 
 function Optimize-Win32Priority {
-    Write-Host "Optimizing CPU scheduling for foreground apps..." -ForegroundColor Cyan
+    Write-Host "Optimizing CPU scheduling for foreground apps!!" -ForegroundColor Cyan
     $RegistryPath = "HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl"
     Set-ItemProperty -Path $RegistryPath -Name "Win32PrioritySeparation" -Value 0x26 -Type DWord -Force
     Write-Host "CPU scheduling has been optimized." -ForegroundColor Green
 }
 
 function Disable-Geolocation {
-    Write-Host "Disabling Geolocation Service..." -ForegroundColor Cyan
+    Write-Host "Disabling Geolocation Service!!" -ForegroundColor Cyan
     sc.exe config lfsvc start= disabled
     sc.exe stop lfsvc
     Write-Host "Geolocation Service has been disabled." -ForegroundColor Green
 }
 
 function Disable-MouseAcceleration {
-    Write-Host "Disabling Mouse Acceleration..." -ForegroundColor Cyan
+    Write-Host "Disabling Mouse Acceleration!!" -ForegroundColor Cyan
     $MouseRegistryPath = "HKCU:\Control Panel\Mouse"
     Set-ItemProperty -Path $MouseRegistryPath -Name "MouseSpeed" -Value "0" -Type String -Force
     Set-ItemProperty -Path $MouseRegistryPath -Name "MouseThreshold1" -Value "0" -Type String -Force
@@ -100,7 +100,7 @@ function Disable-MouseAcceleration {
 }
 
 function Apply-RegistryTweaks {
-    Write-Host "Applying various performance and UI tweaks..." -ForegroundColor Cyan
+    Write-Host "Applying various performance and UI tweaks!!" -ForegroundColor Cyan
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Value 0 -Type DWord -Force
     powercfg -h off
@@ -114,7 +114,7 @@ function Apply-RegistryTweaks {
 }
 
 function Set-NetworkTweaks {
-    Write-Host "Applying network tweaks..." -ForegroundColor Cyan
+    Write-Host "Applying network tweaks!!" -ForegroundColor Cyan
     $adapters = Get-NetAdapter -Physical -OperationalStatus Up
     if ($adapters) {
         foreach ($adapter in $adapters) {
@@ -131,7 +131,7 @@ function Set-NetworkTweaks {
 }
 
 function Set-UltimatePerformance {
-    Write-Host "Setting Power Plan to Ultimate Performance..." -ForegroundColor Cyan
+    Write-Host "Setting Power Plan to Ultimate Performance!!" -ForegroundColor Cyan
     $UltimatePerformanceGuid = "e9a42b02-d5df-448d-aa00-03f14749eb61"
     powercfg /duplicatescheme $UltimatePerformanceGuid | Out-Null
     powercfg /setactive $UltimatePerformanceGuid
@@ -139,7 +139,7 @@ function Set-UltimatePerformance {
 }
 
 function Disable-BackgroundApps {
-    Write-Host "Disabling background apps..." -ForegroundColor Cyan
+    Write-Host "Disabling background apps!!" -ForegroundColor Cyan
     $RegistryPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications"
     if (-not (Test-Path $RegistryPath)) { New-Item -Path $RegistryPath -Force | Out-Null }
     Set-ItemProperty -Path $RegistryPath -Name "GlobalUserDisabled" -Value 1 -Type DWord -Force
@@ -147,7 +147,7 @@ function Disable-BackgroundApps {
 }
 
 function Cleanup-FileExplorer {
-    Write-Host "Cleaning up File Explorer..." -ForegroundColor Cyan
+    Write-Host "Cleaning up File Explorer!!" -ForegroundColor Cyan
     $RegistryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
     Set-ItemProperty -Path $RegistryPath -Name "Hidden" -Value 1 -Type DWord -Force
     Set-ItemProperty -Path $RegistryPath -Name "HideFileExt" -Value 0 -Type DWord -Force
@@ -155,14 +155,14 @@ function Cleanup-FileExplorer {
     $ExplorerPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer"
     Set-ItemProperty -Path $ExplorerPath -Name "ShowFrequent" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $ExplorerPath -Name "ShowRecent" -Value 0 -Type DWord -Force
-    Write-Host "Clearing File Explorer history..." -ForegroundColor White
+    Write-Host "Clearing File Explorer history!!" -ForegroundColor White
     Remove-Item -Path "$env:APPDATA\Microsoft\Windows\Recent\*" -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$env:APPDATA\Microsoft\Windows\Recent\AutomaticDestinations\*" -Force -ErrorAction SilentlyContinue
     Write-Host "File Explorer has been cleaned up." -ForegroundColor Green
 }
 
 function Restore-OldContextMenu {
-    Write-Host "Restoring the classic context menu..." -ForegroundColor Cyan
+    Write-Host "Restoring the classic context menu!!" -ForegroundColor Cyan
     $RegistryPath = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
     if (-not (Test-Path $RegistryPath)) { New-Item -Path $RegistryPath -Force | Out-Null }
     Set-ItemProperty -Path $RegistryPath -Name "(Default)" -Value "" -Type String -Force
@@ -170,7 +170,7 @@ function Restore-OldContextMenu {
 }
 
 function Disable-Cortana {
-    Write-Host "Disabling Cortana..." -ForegroundColor Cyan
+    Write-Host "Disabling Cortana!!" -ForegroundColor Cyan
     $RegistryPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
     if (-not (Test-Path $RegistryPath)) { New-Item -Path $RegistryPath -Force | Out-Null }
     Set-ItemProperty -Path $RegistryPath -Name "AllowCortana" -Value 0 -Type DWord -Force
@@ -178,16 +178,17 @@ function Disable-Cortana {
 }
 
 function Remove-Bloatware {
-    Write-Host "Removing bloatware apps..." -ForegroundColor Cyan
+    Write-Host "Removing bloatware apps!" -ForegroundColor Cyan
     $BloatwareList = @(
         "Microsoft.Microsoft3DViewer", "Microsoft.People", "Microsoft.MixedReality.Portal",
         "Microsoft.MicrosoftOfficeHub", "Microsoft.MicrosoftSolitaireCollection", "Microsoft.Getstarted",
         "Microsoft.YourPhone", "Microsoft.WindowsMaps", "Microsoft.WindowsFeedbackHub",
-        "Microsoft.ZuneMusic", "Microsoft.ZuneVideo", "SpotifyAB.SpotifyMusic", "Netflix.Netflix",
+        "Microsoft.ZuneMusic", "SpotifyAB.SpotifyMusic", "Netflix.Netflix",
         "Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.BingFinance",
         "microsoft.windowscommunicationsapps", "Microsoft.SkypeApp", "5A894077.McAfeeSecurity_2.1.27.0_x64__wafk5atnkzcwy", "5A894077.McAfeeSecurity", "RealtimeboardInc.RealtimeBoard",
         "MirametrixInc.GlancebyMirametrix", "Microsoft.Teams", "Microsoft.SkypeApp", "Microsoft.Print3D", "Microsoft.People", "Disney.37853FC22B2CE", "C27EB4BA.DropboxOEM*",
-        "*CandyCrush*", "*BubbleWitch3Saga*", "MSTeams", "*Microsoft.MicrosoftStickyNotes*"
+        "*CandyCrush*", "*BubbleWitch3Saga*", "MSTeams", "*Microsoft.MicrosoftStickyNotes*", "Microsoft.Copilot", "Microsft.BingSearch", "Microsoft.PowerAutomateDesktop",
+        "Microsoft.Todos", 
     )
     foreach ($AppName in $BloatwareList) {
         Write-Host "Attempting to remove: $AppName" -ForegroundColor White
@@ -201,7 +202,7 @@ function Remove-Bloatware {
 }
 
 function Clear-TemporaryFiles {
-    Write-Host "Cleaning up temporary files and prefetch..." -ForegroundColor Cyan
+    Write-Host "Cleaning up temporary files and prefetch!!" -ForegroundColor Cyan
     $TempFolders = @( "$env:TEMP", "C:\Windows\Temp", "C:\Windows\Prefetch" )
     foreach ($Folder in $TempFolders) {
         Write-Host "Cleaning folder: $Folder" -ForegroundColor White
@@ -215,11 +216,12 @@ function Clear-TemporaryFiles {
 }
 
 function Set-ManualServices {
-    Write-Host "Setting non-essential services to Manual startup..." -ForegroundColor Cyan
+    Write-Host "Setting non-essential services to Manual startup!!" -ForegroundColor Cyan
     $ServicesToSetManual = @(
         "Fax",                  
         "StiSvc",               
-        "TabletInputService"    
+        "TabletInputService",
+        "DoSvc",
     )
     foreach ($ServiceName in $ServicesToSetManual) {
         Write-Host "Setting $ServiceName to Manual." -ForegroundColor White
@@ -233,7 +235,7 @@ function Set-ManualServices {
 }
 
 function Disable-ScheduledTasks {
-    Write-Host "Disabling non-essential scheduled tasks..." -ForegroundColor Cyan
+    Write-Host "Disabling non-essential scheduled tasks!!" -ForegroundColor Cyan
     $TasksToDisable = @(
         "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
         "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
@@ -253,16 +255,16 @@ function Disable-ScheduledTasks {
 }
 
 function Clear-SystemCache {
-    Write-Host "Clearing system caches..." -ForegroundColor Cyan
+    Write-Host "Clearing system caches!!" -ForegroundColor Cyan
     
-    Write-Host "Flushing DNS cache..." -ForegroundColor White
+    Write-Host "Flushing DNS cache!!" -ForegroundColor White
     ipconfig /flushdns
     
     Write-Host "System caches have been cleared." -ForegroundColor Green
 }
 
 function Tweak-ContextMenu {
-    Write-Host "Cleaning up the context menu..." -ForegroundColor Cyan
+    Write-Host "Cleaning up the context menu!!" -ForegroundColor Cyan
     $ContextMenuPaths = @(
         "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked",
         "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked"
@@ -282,7 +284,7 @@ function Tweak-ContextMenu {
 }
 
 function Disable-CpuParking {
-    Write-Host "Disabling CPU Core Parking..." -ForegroundColor Cyan
+    Write-Host "Disabling CPU Core Parking!!" -ForegroundColor Cyan
     $SubGroup = "54533251-82be-4824-96c1-47b60b740d00" # Processor power management
     $Setting = "0cc5b647-c1df-4637-891a-dec35c318583"  # Processor performance core parking min cores
     powercfg /setacvalueindex SCHEME_CURRENT $SubGroup $Setting 100
@@ -295,7 +297,7 @@ function Disable-CpuParking {
 
 
 
-Write-Host "Starting Windows 11 Optimization..." -ForegroundColor Magenta
+Write-Host "Starting Windows 11 Optimization!!" -ForegroundColor Magenta
 Write-Host "LETS TAKE THEM TO THE WASTELANDDD!" -ForegroundColor Red
 
 Disable-Telemetry
@@ -323,4 +325,5 @@ Clear-SystemCache
 Write-Host "All tweaks have been applied, Restart or brimstone will open YOUR sky." -ForegroundColor Magenta
 Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
+
 Read-Host "Press Enter to close"
