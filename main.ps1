@@ -6,7 +6,7 @@
     Thahmid
 
 .VERSION
-    1.7
+    2.0
 #>
 
 
@@ -41,9 +41,6 @@ if ($UserInput -eq 'n' -or $UserInput -eq 'N') {
     Read-Host "Press Enter to close this window!!"
     exit
 }
-
-
-
 
 function Disable-Telemetry {
     Write-Host "Disabling Telemetry and Data Collection!!" -ForegroundColor Cyan
@@ -304,6 +301,101 @@ function Configure-EaseOfAccess {
     Write-Host "Sticky Keys, Toggle Keys, and Filter Keys hotkeys have been disabled." -ForegroundColor Green
 }
 
+function Remove-OneDrive {
+    Write-Host "Attempting to completely remove OneDrive!!" -ForegroundColor Cyan
+    Write-Host "Terminating OneDrive process..." -ForegroundColor White
+    taskkill.exe /f /im OneDrive.exe > $null 2>&1
+    Write-Host "Running OneDrive uninstaller..." -ForegroundColor White
+    $OneDriveSetupPath_64 = "$env:SystemRoot\SysWOW64\OneDriveSetup.exe"
+    $OneDriveSetupPath_32 = "$env:SystemRoot\System32\OneDriveSetup.exe"
+    
+    if (Test-Path $OneDriveSetupPath_64) {
+        Start-Process $OneDriveSetupPath_64 "/uninstall" -Wait
+    }
+    elseif (Test-Path $OneDriveSetupPath_32) {
+        Start-Process $OneDriveSetupPath_32 "/uninstall" -Wait
+    }
+    else {
+        Write-Host "OneDrive installer not found." -ForegroundColor Yellow
+    }
+    Write-Host "Removing OneDrive from File Explorer sidebar..." -ForegroundColor White
+    $RegistryPath = "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
+    if (Test-Path $RegistryPath) {
+        Set-ItemProperty -Path $RegistryPath -Name "System.IsPinnedToNameSpaceTree" -Value 0 -Force -ErrorAction SilentlyContinue
+    }
+
+    Write-Host "OneDrive has been removed. A restart may be required to fully remove the sidebar icon." -ForegroundColor Green
+}
+
+function Add-TakeOwnership {
+    Write-Host "Adding 'Take Ownership' to the context menu!!" -ForegroundColor Cyan
+    $RegPath = "HKCR:\*\shell\runas"
+    if (-not (Test-Path $RegPath)) { New-Item -Path $RegPath -Force | Out-Null }
+    Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "Take Ownership" -Force
+    Set-ItemProperty -Path $RegPath -Name "NoWorkingDirectory" -Value "" -Force
+    $CmdPath = "HKCR:\*\shell\runas\command"
+    if (-not (Test-Path $CmdPath)) { New-Item -Path $CmdPath -Force | Out-Null }
+    Set-ItemProperty -Path $CmdPath -Name "(Default)" -Value 'cmd.exe /c takeown /f "%1" && icacls "%1" /grant administrators:F' -Force
+    Write-Host "'Take Ownership' has been added. Be careful with this power!" -ForegroundColor Green
+}
+
+function Disable-NetworkThrottling {
+    Write-Host "Disabling network throttling!!" -ForegroundColor Cyan
+    $RegistryPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile"
+    Set-ItemProperty -Path $RegistryPath -Name "NetworkThrottlingIndex" -Value 0xFFFFFFFF -Type DWord -Force
+    Write-Host "Network throttling has been disabled." -ForegroundColor Green
+}
+
+function TCP-Opti {
+    Write-Host "Optimizing TCP/IP for lower latency!!" -ForegroundColor Cyan
+    $InterfacesPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
+    $InterfaceGuids = Get-ChildItem -Path $InterfacesPath | ForEach-Object { $_.PSChildName }
+
+    foreach ($Guid in $InterfaceGuids) {
+        $InterfacePath = "$InterfacesPath\$Guid"
+        Set-ItemProperty -Path $InterfacePath -Name "TcpAckFrequency" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $InterfacePath -Name "TCPNoDelay" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+    }
+    Write-Host "TCP/IP settings have been optimized for gaming." -ForegroundColor Green
+}
+
+function Enable-AdvancedAdapterProperties {
+    Write-Host "Enabling advanced network adapter properties!!" -ForegroundColor Cyan
+    $adapters = Get-NetAdapter -Physical -OperationalStatus Up
+    if ($adapters) {
+        foreach ($adapter in $adapters) {
+            Write-Host "Optimizing adapter: $($adapter.Name)" -ForegroundColor White
+            try {
+                Enable-NetAdapterRss -Name $adapter.Name -ErrorAction Stop
+                Write-Host "  - Enabled RSS for $($adapter.Name)." -ForegroundColor Green
+            }
+            catch { Write-Host "  - Failed to enable RSS for $($adapter.Name) or already enabled." -ForegroundColor Yellow }
+            try {
+                Set-NetAdapterChecksumOffload -Name $adapter.Name -IpIPv4Enabled -TcpIPv4Enabled -TcpIPv6Enabled -UdpIPv4Enabled -UdpIPv6Enabled
+                 Write-Host "  - Enabled Checksum Offloads for $($adapter.Name)." -ForegroundColor Green
+            }
+            catch { Write-Host "  - Failed to enable Checksum Offloads for $($adapter.Name)." -ForegroundColor Yellow }
+        }
+    }
+    else { Write-Host "No active physical network adapters found to optimize." -ForegroundColor Yellow }
+    Write-Host "Advanced adapter properties have been configured." -ForegroundColor Green
+}
+
+function Disable-AdapterPowerSaving {
+    Write-Host "Disabling network adapter power saving!!" -ForegroundColor Cyan
+    $adapters = Get-NetAdapter -Physical -OperationalStatus Up
+    if ($adapters) {
+        foreach ($adapter in $adapters) {
+            try {
+                Set-NetAdapterPowerManagement -Name $adapter.Name -ArpOffload -D0PacketCoalescing -NSOffload -RsnRekeyOffload -WakeOnMagicPacket -WakeOnPattern -DeviceSleepOnDisconnect -ErrorAction Stop
+                Write-Host "Disabled power saving for $($adapter.Name)." -ForegroundColor Green
+            }
+            catch { Write-Host "Could not modify power settings for $($adapter.Name). May not be supported." -ForegroundColor Yellow }
+        }
+    }
+     else { Write-Host "No active physical network adapters found." -ForegroundColor Yellow }
+     Write-Host "Adapter power saving has been disabled where supported." -ForegroundColor Green
+}
 
 Write-Host "Starting Windows 11 Optimization!!" -ForegroundColor Magenta
 Write-Host "LETS TAKE THEM TO THE WASTELANDDD!" -ForegroundColor Red
@@ -318,22 +410,29 @@ Disable-Geolocation
 Disable-MouseAcceleration
 Apply-RegistryTweaks
 Set-NetworkTweaks
+Disable-NetworkThrottling
+TCP-Opti
+Enable-AdvancedAdapterProperties
+Disable-AdapterPowerSaving
 Set-UltimatePerformance
 Disable-BackgroundApps
 Cleanup-FileExplorer
 Restore-OldContextMenu
 Disable-Cortana
+Remove-OneDrive
 Remove-Bloatware
 Clear-TemporaryFiles
 Set-ManualServices
 Disable-ScheduledTasks
 Tweak-ContextMenu
+Add-TakeOwnership
 Clear-SystemCache
 
 
-Write-Host "All tweaks have been applied, Restart or brimstone will open YOUR sky." -ForegroundColor Magenta
+Write-Host "All tweaks have been applied, Restart or ill do kawaii things to u!" -ForegroundColor Pink
 Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to close"
+
 
