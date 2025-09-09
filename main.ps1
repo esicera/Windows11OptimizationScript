@@ -6,7 +6,7 @@
     Thahmid
 
 .VERSION
-    2.2
+    2.3
 #>
 
 
@@ -452,11 +452,12 @@ Add-TakeOwnership
 Clear-SystemCache
 
 
-Write-Host "All tweaks have been applied, Restart or ill do kawaii things to u!" -ForegroundColor Pink
+Write-Host "All tweaks have been applied, Restart or ill do kawaii things to u!" -ForegroundColor Green
 Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to close"
+
 
 
 
