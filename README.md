@@ -14,7 +14,7 @@ Performance & Gaming: Disables non-essential services like SysMain (Superfetch),
 
 UI & Customization: Restores the classic Windows 10 right-click menu, disables mouse acceleration, and speeds up UI animations. It also adds a powerful "Take Ownership" command to the context menu for easy file permission changes and cleans up File Explorer for a minimalist look.
 
-System & Cleanup: Clears all temporary files, prefetch data, and flushes the DNS cache to resolve potential issues. It also switches your DNS to Cloudflare's faster servers (1.1.1.1) for improved browsing speed.
+System & Cleanup: Clears all temp files, prefetch data, and flushes DNS cache to resolve potential issues. It also switches your DNS to CLoudflare for improved browsing speed (goat)
 ---
 
 ## 🚀 Quick Start
