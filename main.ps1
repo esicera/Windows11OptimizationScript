@@ -397,6 +397,28 @@ function Disable-AdapterPowerSaving {
      Write-Host "Adapter power saving has been disabled where supported." -ForegroundColor Green
 }
 
+function Configure-StartAndSuggestions {
+    Write-Host "Configuring Start Menu and disabling unwanted suggestions!!" -ForegroundColor Cyan
+    Write-Host "Applying Start Menu layout: More pins, minimal recommendations..." -ForegroundColor White
+    $AdvExplorerPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+    Set-ItemProperty -Path $AdvExplorerPath -Name "Start_Layout" -Value 0 -Type DWord -Force # More pins
+    Set-ItemProperty -Path $AdvExplorerPath -Name "Start_ShowRecentlyAdded" -Value 1 -Type DWord -Force # On
+    Set-ItemProperty -Path $AdvExplorerPath -Name "Start_ShowMostUsed" -Value 0 -Type DWord -Force # Off
+    Set-ItemProperty -Path $AdvExplorerPath -Name "Start_ShowRecommended" -Value 0 -Type DWord -Force # Off
+    Set-ItemProperty -Path $AdvExplorerPath -Name "Start_ShowUser" -Value 1 -Type DWord -Force # On
+    Write-Host "Disabling suggestions, tips, and welcome experience popups..." -ForegroundColor White
+    $ContentManagerPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+    if (-not (Test-Path $ContentManagerPath)) { New-Item -Path $ContentManagerPath -Force | Out-Null }
+    Set-ItemProperty -Path $ContentManagerPath -Name "SubscribedContent-338389Enabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $ContentManagerPath -Name "RotatingLockScreenOverlayEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $ContentManagerPath -Name "SubscribedContent-310093Enabled" -Value 0 -Type DWord -Force
+    $EngagementPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement"
+    if (-not (Test-Path $EngagementPath)) { New-Item -Path $EngagementPath -Force | Out-Null }
+    Set-ItemProperty -Path $EngagementPath -Name "ScoobeSystemSettingEnabled" -Value 0 -Type DWord -Force
+
+    Write-Host "Start Menu and suggestions have been configured." -ForegroundColor Green
+}
+
 Write-Host "Starting Windows 11 Optimization!!" -ForegroundColor Magenta
 Write-Host "LETS TAKE THEM TO THE WASTELANDDD!" -ForegroundColor Red
 
@@ -416,6 +438,7 @@ Enable-AdvancedAdapterProperties
 Disable-AdapterPowerSaving
 Set-UltimatePerformance
 Disable-BackgroundApps
+Configure-StartAndSuggestions
 Cleanup-FileExplorer
 Restore-OldContextMenu
 Disable-Cortana
@@ -434,5 +457,6 @@ Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to close"
+
 
 
