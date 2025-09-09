@@ -185,7 +185,7 @@ function Remove-Bloatware {
         "microsoft.windowscommunicationsapps", "Microsoft.SkypeApp", "5A894077.McAfeeSecurity_2.1.27.0_x64__wafk5atnkzcwy", "5A894077.McAfeeSecurity", "RealtimeboardInc.RealtimeBoard",
         "MirametrixInc.GlancebyMirametrix", "Microsoft.Teams", "Microsoft.Print3D", "Disney.37853FC22B2CE", "C27EB4BA.DropboxOEM*",
         "*CandyCrush*", "*BubbleWitch3Saga*", "MSTeams", "*Microsoft.MicrosoftStickyNotes*", "Microsoft.Copilot", "Microsft.BingSearch", "Microsoft.PowerAutomateDesktop",
-        "Microsoft.Todos", 
+        "Microsoft.Todos"
     )
     foreach ($AppName in $BloatwareList) {
         Write-Host "Attempting to remove: $AppName" -ForegroundColor White
@@ -218,7 +218,7 @@ function Set-ManualServices {
         "Fax",                  
         "StiSvc",               
         "TabletInputService",
-        "DoSvc",
+        "DoSvc"
     )
     foreach ($ServiceName in $ServicesToSetManual) {
         Write-Host "Setting $ServiceName to Manual." -ForegroundColor White
@@ -457,6 +457,7 @@ Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to close"
+
 
 
 
