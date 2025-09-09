@@ -6,7 +6,7 @@
     Thahmid
 
 .VERSION
-    1.4
+    1.7
 #>
 
 
@@ -183,10 +183,10 @@ function Remove-Bloatware {
         "Microsoft.Microsoft3DViewer", "Microsoft.People", "Microsoft.MixedReality.Portal",
         "Microsoft.MicrosoftOfficeHub", "Microsoft.MicrosoftSolitaireCollection", "Microsoft.Getstarted",
         "Microsoft.YourPhone", "Microsoft.WindowsMaps", "Microsoft.WindowsFeedbackHub",
-        "Microsoft.ZuneMusic", "SpotifyAB.SpotifyMusic", "Netflix.Netflix",
+        "SpotifyAB.SpotifyMusic", "Netflix.Netflix",
         "Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.BingFinance",
         "microsoft.windowscommunicationsapps", "Microsoft.SkypeApp", "5A894077.McAfeeSecurity_2.1.27.0_x64__wafk5atnkzcwy", "5A894077.McAfeeSecurity", "RealtimeboardInc.RealtimeBoard",
-        "MirametrixInc.GlancebyMirametrix", "Microsoft.Teams", "Microsoft.SkypeApp", "Microsoft.Print3D", "Microsoft.People", "Disney.37853FC22B2CE", "C27EB4BA.DropboxOEM*",
+        "MirametrixInc.GlancebyMirametrix", "Microsoft.Teams", "Microsoft.Print3D", "Disney.37853FC22B2CE", "C27EB4BA.DropboxOEM*",
         "*CandyCrush*", "*BubbleWitch3Saga*", "MSTeams", "*Microsoft.MicrosoftStickyNotes*", "Microsoft.Copilot", "Microsft.BingSearch", "Microsoft.PowerAutomateDesktop",
         "Microsoft.Todos", 
     )
@@ -285,16 +285,24 @@ function Tweak-ContextMenu {
 
 function Disable-CpuParking {
     Write-Host "Disabling CPU Core Parking!!" -ForegroundColor Cyan
-    $SubGroup = "54533251-82be-4824-96c1-47b60b740d00" # Processor power management
-    $Setting = "0cc5b647-c1df-4637-891a-dec35c318583"  # Processor performance core parking min cores
+    $SubGroup = "54533251-82be-4824-96c1-47b60b740d00"
+    $Setting = "0cc5b647-c1df-4637-891a-dec35c318583"
     powercfg /setacvalueindex SCHEME_CURRENT $SubGroup $Setting 100
     powercfg /setdcvalueindex SCHEME_CURRENT $SubGroup $Setting 100
     powercfg /setactive SCHEME_CURRENT
-    
     Write-Host "CPU Core Parking has been disabled." -ForegroundColor Green
 }
 
-
+function Configure-EaseOfAccess {
+    Write-Host "Configuring Ease of Access settings (disabling hotkeys)!!" -ForegroundColor Cyan
+    $StickyKeysPath = "HKCU:\Control Panel\Accessibility\StickyKeys"
+    Set-ItemProperty -Path $StickyKeysPath -Name "Flags" -Value "58" -Type String -Force
+    $KeyboardResponsePath = "HKCU:\Control Panel\Accessibility\Keyboard Response"
+    Set-ItemProperty -Path $KeyboardResponsePath -Name "Flags" -Value "122" -Type String -Force
+    $ToggleKeysPath = "HKCU:\Control Panel\Accessibility\ToggleKeys"
+    Set-ItemProperty -Path $ToggleKeysPath -Name "Flags" -Value "58" -Type String -Force
+    Write-Host "Sticky Keys, Toggle Keys, and Filter Keys hotkeys have been disabled." -ForegroundColor Green
+}
 
 
 Write-Host "Starting Windows 11 Optimization!!" -ForegroundColor Magenta
@@ -305,6 +313,7 @@ Disable-SysMain
 Set-EdgePrivacy
 Optimize-Win32Priority
 Disable-CpuParking
+Configure-EaseOfAccess
 Disable-Geolocation
 Disable-MouseAcceleration
 Apply-RegistryTweaks
@@ -327,3 +336,4 @@ Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to close"
+
