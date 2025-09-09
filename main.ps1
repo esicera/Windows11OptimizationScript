@@ -6,7 +6,7 @@
     Thahmid
 
 .VERSION
-    2.0
+    2.2
 #>
 
 
@@ -457,6 +457,7 @@ Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to close"
+
 
 
 
