@@ -6,7 +6,7 @@
     Thahmid
 
 .VERSION
-    2.3
+    2.3A
 #>
 
 
@@ -32,7 +32,7 @@ Write-Host ""
 Write-Host "It is STRONGLY RECOMMENDED that you create a System Restore Point" -ForegroundColor Cyan
 Write-Host "before proceeding with these optimizations." -ForegroundColor Cyan
 Write-Host ""
-Write-Host "LETS TAKE THEM TO THE WASTELAND"-ForegroundColor Red
+Write-Host "KIRA KIRA BEAMMM"-ForegroundColor Magenta
 Write-Host ""
 $UserInput = Read-Host "Press ENTER to continue, or 'N' to exit"
 
@@ -180,9 +180,9 @@ function Remove-Bloatware {
         "Microsoft.Microsoft3DViewer", "Microsoft.People", "Microsoft.MixedReality.Portal",
         "Microsoft.MicrosoftOfficeHub", "Microsoft.MicrosoftSolitaireCollection", "Microsoft.Getstarted",
         "Microsoft.YourPhone", "Microsoft.WindowsMaps", "Microsoft.WindowsFeedbackHub",
-        "SpotifyAB.SpotifyMusic", "Netflix.Netflix",
-        "Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.BingFinance",
-        "microsoft.windowscommunicationsapps", "Microsoft.SkypeApp", "5A894077.McAfeeSecurity_2.1.27.0_x64__wafk5atnkzcwy", "5A894077.McAfeeSecurity", "RealtimeboardInc.RealtimeBoard",
+        "Netflix.Netflix", "Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.BingFinance",
+        "microsoft.windowscommunicationsapps", "Microsoft.SkypeApp", 
+        "5A894077.McAfeeSecurity_2.1.27.0_x64__wafk5atnkzcwy", "5A894077.McAfeeSecurity", "RealtimeboardInc.RealtimeBoard",
         "MirametrixInc.GlancebyMirametrix", "Microsoft.Teams", "Microsoft.Print3D", "Disney.37853FC22B2CE", "C27EB4BA.DropboxOEM*",
         "*CandyCrush*", "*BubbleWitch3Saga*", "MSTeams", "*Microsoft.MicrosoftStickyNotes*", "Microsoft.Copilot", "Microsft.BingSearch", "Microsoft.PowerAutomateDesktop",
         "Microsoft.Todos"
@@ -457,6 +457,7 @@ Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to close"
+
 
 
 
