@@ -1,7 +1,9 @@
 # 🛠️ Windows 11 Optimization Script
 
 A lightweight, modular PowerShell script designed to streamline, debloat, and optimize Windows 11 for improved performance, privacy, and usability. Ideal for fresh installs, gaming rigs, and power users.
-
+CHECK MY SHOWCASE! 
+---
+https://youtu.be/3eIEDpaehE8?feature=shared
 ---
 
 ![meow](https://github.com/esicera/Windows11OptimizationScript/blob/main/kira%20kira%20beam.gif)
