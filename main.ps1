@@ -6,7 +6,7 @@
     Thahmid
 
 .VERSION
-    2.3A
+    2.4
 #>
 
 
@@ -40,6 +40,19 @@ if ($UserInput -eq 'n' -or $UserInput -eq 'N') {
     Write-Host "Script execution cancelled by user." -ForegroundColor Red
     Read-Host "Press Enter to close this window!!"
     exit
+}
+
+function Create-Restore-Point {
+    Write-Host "Creating a System Restore Point. This may take a moment..." -ForegroundColor Cyan
+    try {
+        Checkpoint-Computer -Description "Before Windows 11 Optimization Script" -RestorePointType "MODIFY_SETTINGS"
+        Write-Host "System Restore Point created successfully!" -ForegroundColor Green
+    }
+    catch {
+        Write-Host "WARNING: Could not create a System Restore Point." -ForegroundColor Red
+        Write-Host "Please ensure System Restore is enabled on your C: drive." -ForegroundColor Red
+        Read-Host "Press Enter to continue without a restore point, or close this window to exit."
+    }
 }
 
 function Disable-Telemetry {
@@ -419,9 +432,22 @@ function Configure-StartAndSuggestions {
     Write-Host "Start Menu and suggestions have been configured." -ForegroundColor Green
 }
 
+function Disable-WebSearch {
+    Write-Host "Disabling Web Search and Suggestions in the Start Menu!!" -ForegroundColor Cyan
+    $PolicyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer"
+    if (-not (Test-Path $PolicyPath)) { New-Item -Path $PolicyPath -Force | Out-Null }
+    Set-ItemProperty -Path $PolicyPath -Name "DisableSearchBoxSuggestions" -Value 1 -Type DWord -Force
+    $HighlightsPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
+    if (-not (Test-Path $HighlightsPath)) { New-Item -Path $HighlightsPath -Force | Out-Null }
+    Set-ItemProperty -Path $HighlightsPath -Name "EnableDynamicContentInWSB" -Value 0 -Type DWord -Force
+
+    Write-Host "Web search and highlights have been disabled. A reboot is required." -ForegroundColor Green
+}
+
 Write-Host "Starting Windows 11 Optimization!!" -ForegroundColor Magenta
 Write-Host "LETS TAKE THEM TO THE WASTELANDDD!" -ForegroundColor Red
 
+Create-Restore-Point
 Disable-Telemetry
 Disable-SysMain
 Set-EdgePrivacy
@@ -439,6 +465,7 @@ Disable-AdapterPowerSaving
 Set-UltimatePerformance
 Disable-BackgroundApps
 Configure-StartAndSuggestions
+Disable-WebSearch
 Cleanup-FileExplorer
 Restore-OldContextMenu
 Disable-Cortana
@@ -457,10 +484,3 @@ Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to close"
-
-
-
-
-
-
-
