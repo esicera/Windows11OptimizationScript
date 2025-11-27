@@ -35,4 +35,4 @@ https://youtu.be/3eIEDpaehE8?feature=shared
 > **Warning:** Use at your own risk. This script makes system-level changes (Registry, Services, Uninstallation). Always back up important data first. **CREATE A RESTORE POINT!!**
 To run the latest version directly:
 ```powershell
-PowerShell -ExecutionPolicy Bypass -Command "iex (irm '[https://raw.githubusercontent.com/esicera/Windows11OptimizationScript/main/main.ps1](https://raw.githubusercontent.com/esicera/Windows11OptimizationScript/main/main.ps1)')"
+PowerShell -ExecutionPolicy Bypass -Command "iex (irm 'https://raw.githubusercontent.com/esicera/Windows11OptimizationScript/main/main.ps1')"
