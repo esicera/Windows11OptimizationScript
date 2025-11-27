@@ -3,12 +3,11 @@
    Silly script that makes your life kawaii
 
 .AUTHOR
-    Thahmid
+   Thahmid
 
 .VERSION
-    2.4
+   2.5
 #>
-
 
 # Ensure the script is running as Administrator
 Write-Host "Checking for administrative privileges!!" -ForegroundColor Yellow
@@ -32,7 +31,7 @@ Write-Host ""
 Write-Host "It is STRONGLY RECOMMENDED that you create a System Restore Point" -ForegroundColor Cyan
 Write-Host "before proceeding with these optimizations." -ForegroundColor Cyan
 Write-Host ""
-Write-Host "KIRA KIRA BEAMMM"-ForegroundColor Magenta
+Write-Host "KIRA KIRA BEAMMM" -ForegroundColor Magenta
 Write-Host ""
 $UserInput = Read-Host "Press ENTER to continue, or 'N' to exit"
 
@@ -45,7 +44,7 @@ if ($UserInput -eq 'n' -or $UserInput -eq 'N') {
 function Create-Restore-Point {
     Write-Host "Creating a System Restore Point. This may take a moment..." -ForegroundColor Cyan
     try {
-        Checkpoint-Computer -Description "Before Windows 11 Optimization Script" -RestorePointType "MODIFY_SETTINGS"
+        Checkpoint-Computer -Description "Before Kawaii Optimization" -RestorePointType "MODIFY_SETTINGS"
         Write-Host "System Restore Point created successfully!" -ForegroundColor Green
     }
     catch {
@@ -250,6 +249,7 @@ function Disable-ScheduledTasks {
         "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
         "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
         "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip",
+        "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeip",
         "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
     )
     foreach ($TaskPath in $TasksToDisable) {
@@ -425,6 +425,11 @@ function Configure-StartAndSuggestions {
     Set-ItemProperty -Path $ContentManagerPath -Name "SubscribedContent-338389Enabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $ContentManagerPath -Name "RotatingLockScreenOverlayEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $ContentManagerPath -Name "SubscribedContent-310093Enabled" -Value 0 -Type DWord -Force
+    # New additions from Privacy Tweaks
+    Set-ItemProperty -Path $ContentManagerPath -Name "SilentInstalledAppsEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $ContentManagerPath -Name "ContentDeliveryAllowed" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $ContentManagerPath -Name "SystemPaneSuggestionsEnabled" -Value 0 -Type DWord -Force
+
     $EngagementPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement"
     if (-not (Test-Path $EngagementPath)) { New-Item -Path $EngagementPath -Force | Out-Null }
     Set-ItemProperty -Path $EngagementPath -Name "ScoobeSystemSettingEnabled" -Value 0 -Type DWord -Force
@@ -444,6 +449,108 @@ function Disable-WebSearch {
     Write-Host "Web search and highlights have been disabled. A reboot is required." -ForegroundColor Green
 }
 
+# --- NEW INTEGRATED FUNCTIONS START HERE ---
+
+function Optimize-MemoryManagement {
+    # Integrated from Performance Tweaks.ps1
+    Write-Host "Optimizing memory management settings!!" -ForegroundColor Cyan
+    $MemoryPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management"
+    Set-ItemProperty -Path $MemoryPath -Name "LargeSystemCache" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $MemoryPath -Name "IoPageLockLimit" -Value 983040 -Type DWord -Force
+    Set-ItemProperty -Path $MemoryPath -Name "DisablePagingExecutive" -Value 1 -Type DWord -Force
+    Write-Host "Memory management settings have been optimized." -ForegroundColor Green
+}
+
+function Set-VisualEffectsBalanced {
+    # Integrated from Performance Tweaks.ps1
+    Write-Host "Applying a balanced set of visual effects for performance!!" -ForegroundColor Cyan
+    $VisualEffectsPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects"
+    Set-ItemProperty -Path $VisualEffectsPath -Name "VisualFXSetting" -Value 3 -Type DWord -Force
+    $BalancedMask = [byte[]](0x90, 0x32, 0x07, 0x80, 0x10, 0x00, 0x00, 0x00)
+    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Value $BalancedMask -Type Binary -Force    
+    Write-Host "Balanced visual effects have been applied." -ForegroundColor Green
+}
+
+function ForceRemoveEdge {
+    # Integrated from Remove MS Edge.ps1
+    Write-Host "> Forcefully uninstalling Microsoft Edge..." -ForegroundColor Magenta
+
+    $regView = [Microsoft.Win32.RegistryView]::Registry32
+    $hklm = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, $regView)
+    $hklm.CreateSubKey('SOFTWARE\Microsoft\EdgeUpdateDev').SetValue('AllowUninstall', '')
+
+    $edgeStub = "$env:SystemRoot\SystemApps\Microsoft.MicrosoftEdge_8wekyb3d8bbwe"
+    New-Item $edgeStub -ItemType Directory -Force | Out-Null
+    New-Item "$edgeStub\MicrosoftEdge.exe" -Force | Out-Null
+
+    $uninstallRegKey = $hklm.OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft Edge')
+    if ($null -ne $uninstallRegKey) {
+        Write-Host "Running uninstaller..." -ForegroundColor White
+        $uninstallString = $uninstallRegKey.GetValue('UninstallString') + ' --force-uninstall'
+        Start-Process cmd.exe "/c $uninstallString" -WindowStyle Hidden -Wait
+
+        Write-Host "Removing leftover files..." -ForegroundColor White
+        $edgePaths = @(
+            "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Edge.lnk",
+            "$env:APPDATA\Microsoft\Internet Explorer\Quick Launch\Microsoft Edge.lnk",
+            "$env:APPDATA\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Microsoft Edge.lnk",
+            "$env:APPDATA\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Tombstones\Microsoft Edge.lnk",
+            "$env:PUBLIC\Desktop\Microsoft Edge.lnk",
+            "$env:USERPROFILE\Desktop\Microsoft Edge.lnk",
+            "$edgeStub"
+        )
+        foreach ($path in $edgePaths) {
+            if (Test-Path -Path $path) {
+                Remove-Item -Path $path -Force -Recurse -ErrorAction SilentlyContinue
+                Write-Host "  Removed $path" -ForegroundColor DarkGray
+            }
+        }
+        Write-Host "Cleaning up registry..." -ForegroundColor White
+        # Remove MS Edge from autostart
+        reg delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /v "MicrosoftEdgeAutoLaunch_A9F6DCE4ABADF4F51CF45CD7129E3C6C" /f *>$null
+        reg delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /v "Microsoft Edge Update" /f *>$null
+        Write-Host "Microsoft Edge was uninstalled" -ForegroundColor Green
+    } else {
+        Write-Host "Error: Unable to find Edge uninstaller." -ForegroundColor Red
+    }
+}
+
+function Optimize-QoS {
+    # Integrated from Network Tweaks.ps1
+    Write-Host "Disabling QoS 'NonBestEffortLimit'..." -ForegroundColor Cyan
+    try {
+        $RegistryPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Psched\Parameters"
+        Set-ItemProperty -Path $RegistryPath -Name "NonBestEffortLimit" -Value 0 -Type DWord -Force -ErrorAction Stop
+        Write-Host "  > QoS 'NonBestEffortLimit' has been set to 0." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "  > Failed to set QoS parameter." -ForegroundColor Yellow
+    }
+}
+
+function Set-AdvancedTCPsettings-Netsh {
+    # Integrated from Network Tweaks.ps1
+    Write-Host "Applying advanced TCP Global settings via netsh..." -ForegroundColor Cyan
+    try {
+        netsh int tcp set global ecncapability=disabled
+        netsh int tcp set global autotuninglevel=normal
+        netsh int tcp set global congestionprovider=ctcp
+        Write-Host "  > TCP ECN Capability disabled, Auto-Tuning normal, Congestion CTCP." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "  > Failed to apply netsh TCP settings." -ForegroundColor Red
+    }
+}
+
+function Disable-AdvertisingId {
+    # Integrated from Privacy Tweaks.ps1
+    Write-Host "Disabling Advertising ID for the current user!!" -ForegroundColor Cyan
+    $RegistryPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
+    if (-not (Test-Path $RegistryPath)) { New-Item -Path $RegistryPath -Force | Out-Null }
+    Set-ItemProperty -Path $RegistryPath -Name "Enabled" -Value 0 -Type DWord -Force
+    Write-Host "Advertising ID has been disabled." -ForegroundColor Green
+}
+
 Write-Host "Starting Windows 11 Optimization!!" -ForegroundColor Magenta
 Write-Host "LETS TAKE THEM TO THE WASTELANDDD!" -ForegroundColor Red
 
@@ -451,15 +558,20 @@ Create-Restore-Point
 Disable-Telemetry
 Disable-SysMain
 Set-EdgePrivacy
+Disable-AdvertisingId
 Optimize-Win32Priority
 Disable-CpuParking
 Configure-EaseOfAccess
 Disable-Geolocation
 Disable-MouseAcceleration
 Apply-RegistryTweaks
+Optimize-MemoryManagement
+Set-VisualEffectsBalanced
 Set-NetworkTweaks
 Disable-NetworkThrottling
 TCP-Opti
+Optimize-QoS
+Set-AdvancedTCPsettings-Netsh
 Enable-AdvancedAdapterProperties
 Disable-AdapterPowerSaving
 Set-UltimatePerformance
@@ -470,6 +582,7 @@ Cleanup-FileExplorer
 Restore-OldContextMenu
 Disable-Cortana
 Remove-OneDrive
+ForceRemoveEdge
 Remove-Bloatware
 Clear-TemporaryFiles
 Set-ManualServices
@@ -477,7 +590,6 @@ Disable-ScheduledTasks
 Tweak-ContextMenu
 Add-TakeOwnership
 Clear-SystemCache
-
 
 Write-Host "All tweaks have been applied, Restart or ill do kawaii things to u!" -ForegroundColor Green
 Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
