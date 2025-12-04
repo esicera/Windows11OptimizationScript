@@ -202,15 +202,10 @@ function Optimize-Network-Stack {
         Set-ItemProperty -Path $InterfacePath -Name "TcpAckFrequency" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
         Set-ItemProperty -Path $InterfacePath -Name "TCPNoDelay" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
     }
-
-    # 2. Advanced Netsh (From Network Tweaks.ps1)
     try {
         netsh int tcp set global ecncapability=disabled
         netsh int tcp set global autotuninglevel=normal
-        netsh int tcp set global congestionprovider=ctcp
     } catch {}
-
-    # 3. Aggressive PowerShell TCP (From Network Tweaks.ps1)
     try {
         Set-NetTCPSetting -SettingName "InternetCustom" -CongestionProvider CTCP -InitialRto 2000 -MinRto 300 -ErrorAction SilentlyContinue
     } catch {}
@@ -225,7 +220,8 @@ function Optimize-Network-Stack {
 
 function Optimize-Adapters {
     Write-Host "Optimizing Physical Adapters..." -ForegroundColor Cyan
-    $adapters = Get-NetAdapter -Physical -OperationalStatus Up
+    $adapters = Get-NetAdapter -Physical | Where-Object { $_.Status -eq 'Up' }
+    
     if ($adapters) {
         # Set Cloudflare DNS
         foreach ($adapter in $adapters) {
@@ -241,11 +237,9 @@ function Optimize-Adapters {
     }
     Write-Host "Adapters configured." -ForegroundColor Green
 }
-
 # --- 6. CLEANUP & TASKS ---
 function Disable-Tasks-Merged {
     Write-Host "Disabling Unwanted Scheduled Tasks..." -ForegroundColor Cyan
-    # Combined list from Main.ps1 and Privacy Tweaks.ps1
     $TasksToDisable = @(
         "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
         "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
@@ -309,3 +303,4 @@ Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to exit..."
+
