@@ -6,7 +6,7 @@
    Thahmid
 
 .VERSION
-   3.0
+   3.3
 #>
 
 # --- PRE-FLIGHT CHECKS ---
@@ -40,13 +40,20 @@ if ($UserInput -eq 'n' -or $UserInput -eq 'N') {
 
 # --- 1. SYSTEM SAFETY ---
 function Create-Restore-Point {
-    Write-Host "Creating a System Restore Point..." -ForegroundColor Cyan
+    Write-Host "Ensuring System Restore is enabled..." -ForegroundColor Cyan
     try {
-        Checkpoint-Computer -Description "Kawaii Optimization Final" -RestorePointType "MODIFY_SETTINGS"
+        Set-Service -Name "sr" -StartupType Automatic -ErrorAction SilentlyContinue
+        Start-Service -Name "sr" -ErrorAction SilentlyContinue
+        Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
+        Write-Host "Creating a System Restore Point..." -ForegroundColor Cyan
+        Checkpoint-Computer -Description "Kawaii Optimization Final" -RestorePointType "MODIFY_SETTINGS" -ErrorAction Stop
         Write-Host "System Restore Point created successfully!" -ForegroundColor Green
     }
     catch {
-        Write-Host "WARNING: Could not create a System Restore Point. Proceed with caution!" -ForegroundColor Red
+        Write-Host "WARNING: Could not create a System Restore Point." -ForegroundColor Red
+        Write-Host "Reason: Your System Restore service might be fully broken or blocked." -ForegroundColor Yellow
+        Write-Host "Continuing with script in 3 seconds..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 3
     }
 }
 
@@ -303,4 +310,5 @@ Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to exit..."
+
 
