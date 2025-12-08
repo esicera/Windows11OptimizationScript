@@ -1,12 +1,12 @@
 <#
 .DESCRIPTION
-   The Ultimate Kawaii Optimization Script
+   best script no cap >_<
 
 .AUTHOR
    Thahmid
 
 .VERSION
-   3.3
+   3.4A
 #>
 
 # --- PRE-FLIGHT CHECKS ---
@@ -124,20 +124,161 @@ function ForceRemoveEdge {
 }
 
 function Remove-Bloatware-Apps {
-    Write-Host "Removing Bloatware Apps..." -ForegroundColor Cyan
+    Write-Host "Removing Extended Bloatware List..." -ForegroundColor Cyan
+    
     $BloatwareList = @(
-        "Microsoft.Microsoft3DViewer", "Microsoft.People", "Microsoft.MixedReality.Portal",
-        "Microsoft.MicrosoftOfficeHub", "Microsoft.MicrosoftSolitaireCollection", "Microsoft.Getstarted",
-        "Microsoft.YourPhone", "Microsoft.WindowsMaps", "Microsoft.WindowsFeedbackHub",
-        "Netflix.Netflix", "Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.BingFinance",
-        "microsoft.windowscommunicationsapps", "Microsoft.SkypeApp", "Microsoft.Teams", "Microsoft.Print3D", 
-        "Disney.37853FC22B2CE", "*CandyCrush*", "*BubbleWitch3Saga*", "MSTeams", 
-        "Microsoft.Copilot", "Microsft.BingSearch", "Microsoft.PowerAutomateDesktop", "Microsoft.Todos"
+        # --- Microsoft Basic Bloat ---
+        "Microsoft.Microsoft3DViewer", 
+        "Microsoft.MixedReality.Portal",
+        "Microsoft.MicrosoftOfficeHub", 
+        "Microsoft.MicrosoftSolitaireCollection", 
+        "Microsoft.Getstarted", # Tips
+        "Microsoft.YourPhone", 
+        "Microsoft.WindowsMaps", 
+        "Microsoft.WindowsFeedbackHub",
+        "Microsoft.BingNews", 
+        "Microsoft.BingWeather", 
+        "Microsoft.BingFinance",
+        "Microsoft.BingFoodAndDrink",
+        "Microsoft.People",
+        "microsoft.windowscommunicationsapps", # Mail & Calendar (Old)
+        "Microsoft.SkypeApp", 
+        "Microsoft.Teams", 
+        "MSTeams", # New Teams
+        "Microsoft.Print3D",
+        "Microsoft.3DBuilder",
+        "Microsoft.MicrosoftStickyNotes",
+        "Microsoft.Copilot", 
+        "Microsft.BingSearch", 
+        "Microsoft.PowerAutomateDesktop",
+        "Microsoft.Todos",
+        "Microsoft.Office.OneNote", 
+        "Microsoft.Office.Sway",
+        "Microsoft.OneConnect", # Mobile plans
+        "MicrosoftCorporationII.MicrosoftFamily",
+        "Microsoft.Windows.DevHome",
+        "Microsoft.549981C3F5F10", # Cortana
+        "Microsoft.ZuneMusic", # Legacy Media Player
+        "Microsoft.ZuneVideo", # Legacy Movies & TV
+        
+        # --- Third Party / Pre-installed Junk ---
+        "Netflix.Netflix",
+        "Disney.37853FC22B2CE",
+        "DisneyMagicKingdoms",
+        "Amazon.com.Amazon",
+        "AmazonVideo.PrimeVideo",
+        "PandoraMediaInc",
+        "Plex",
+        "Clipchamp.Clipchamp",
+        "Tik-Tok",
+        "Instagram",
+        "Facebook",
+        "Twitter",
+        "WhatsApp",
+        "AdobeSystemsIncorporated.AdobePhotoshopExpress",
+        "AutodeskSketchBook",
+        "Duolingo-LearnLanguagesforFree",
+        "Flipboard.Flipboard",
+        "TuneInRadio",
+        "*CandyCrush*", 
+        "*BubbleWitch3Saga*",
+        "King.com.CandyCrushSaga",
+        "King.com.CandyCrushSodaSaga",
+        "MarchoEmpires",
+        "Asphalt8Airborne",
+        "CaesarsSlotsFreeCasino",
+        "COOKINGFEVER",
+        "FarmVille2CountryEscape",
+        "HiddenCityMysteryofShadows",
+        "ROBLOXCORPORATION.ROBLOX",
+        
+        # --- OEM / Security Bloat (McAfee, etc.) ---
+        "5A894077.McAfeeSecurity*",
+        "RealtimeboardInc.RealtimeBoard",
+        "MirametrixInc.GlancebyMirametrix",
+        "C27EB4BA.DropboxOEM*"
     )
+
     foreach ($AppName in $BloatwareList) {
-        Get-AppxPackage -AllUsers -Name $AppName -ErrorAction SilentlyContinue | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
+        Get-AppxPackage -Name $AppName -AllUsers -ErrorAction SilentlyContinue | ForEach-Object {
+            Write-Host "Removing $($_.Name)..." -ForegroundColor DarkGray
+            $_ | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
+        }
     }
-    Write-Host "Bloatware apps removed." -ForegroundColor Green
+    Write-Host "Bloatware removal complete." -ForegroundColor Green
+}
+
+function Remove-Vendor-Bloatware {
+    Write-Host "Detecting PC Manufacturer..." -ForegroundColor Cyan
+    $Vendor = (Get-CimInstance -ClassName Win32_ComputerSystem).Manufacturer
+    Write-Host "Vendor Detected: $Vendor" -ForegroundColor Magenta
+    $UniversalBloat = @(
+        "McAfee", 
+        "Norton", 
+        "Avast", 
+        "Dropbox", 
+        "Evernote", 
+        "WPSOffice",
+        "LinkedIn",
+        "TikTok",
+        "Disney",
+        "Spotify",
+        "Pandora"
+    )
+
+    # Vendor-Specific Lists
+    $VendorLists = @{
+        "HP" = @(
+            "HP Audio Switch", "HP Connection Optimizer", "HP Documentation", 
+            "HP JumpStart", "HP Sure Click", "HP Wolf Security", "HP Support Assistant", 
+            "AD2F1837.*"
+        )
+        "Dell" = @(
+            "Dell Digital Delivery", "Dell Help & Support", "Dell Update", 
+            "SupportAssist", "Dell Power Manager", "Dell Optimizer", 
+            "DellInc.DellSupportAssistforPCs"
+        )
+        "Lenovo" = @(
+            "Lenovo Vantage", "Lenovo Utility", "Lenovo Welcome", 
+            "LenovoServiceBridge", "Lenovo.Vantage", "E046963F.LenovoCompanion"
+        )
+        "ASUS" = @(
+            "MyASUS", "ASUS GiftBox", "ASUS Live Update", 
+            "B9ECED6F.ASUSPCAssistant"
+        )
+        "Acer" = @(
+            "Acer Care Center", "Acer Collection", "Acer Jumpstart", 
+            "Acer Portal", "AcerIncorporated.AcerCareCenter"
+        )
+        "MSI" = @(
+            "Dragon Center", "MSI Center", "MSI App Player", 
+            "Micro-StarInternationalCoLtd.DragonCenter"
+        )
+    }
+    $KillList = $UniversalBloat + @()
+    foreach ($Key in $VendorLists.Keys) {
+        if ($Vendor -match $Key) {
+            Write-Host "Loading removal list for $Key..." -ForegroundColor Green
+            $KillList += $VendorLists[$Key]
+        }
+    }
+    Write-Host "Scanning Store Apps..." -ForegroundColor Cyan
+    foreach ($App in $KillList) {
+        Get-AppxPackage -Name "*$App*" -AllUsers -ErrorAction SilentlyContinue | ForEach-Object {
+            Write-Host "Removing Appx: $($_.Name)..." -ForegroundColor DarkGray
+            $_ | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
+        }
+    }
+
+    Write-Host "Scanning Installed Programs..." -ForegroundColor Cyan
+    foreach ($App in $KillList) {
+        Get-Package -Name "*$App*" -ErrorAction SilentlyContinue | ForEach-Object {
+            Write-Host "Uninstalling Program: $($_.Name)..." -ForegroundColor Magenta
+            Uninstall-Package -InputObject $_ -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    Write-Host "Vendor Bloatware scrubbed!" -ForegroundColor Green
 }
 
 function Remove-OneDrive {
@@ -153,7 +294,6 @@ function Remove-OneDrive {
 # --- 4. PERFORMANCE & POWER ---
 function Set-Power-Ultimate {
     Write-Host "Setting Power Plan to Ultimate Performance!!" -ForegroundColor Cyan
-    # Overrides 'High Performance' from Performance Tweaks.ps1
     $UltimatePerformanceGuid = "e9a42b02-d5df-448d-aa00-03f14749eb61"
     powercfg /duplicatescheme $UltimatePerformanceGuid | Out-Null
     powercfg /setactive $UltimatePerformanceGuid
@@ -187,7 +327,6 @@ function Optimize-CPU-Memory {
 
 function Set-VisualEffects {
     Write-Host "Setting Balanced Visual Effects..." -ForegroundColor Cyan
-    # (From Performance Tweaks.ps1 - more comprehensive than main.ps1)
     $VisualEffectsPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects"
     Set-ItemProperty -Path $VisualEffectsPath -Name "VisualFXSetting" -Value 3 -Type DWord -Force
     $BalancedMask = [byte[]](0x90, 0x32, 0x07, 0x80, 0x10, 0x00, 0x00, 0x00)
@@ -198,8 +337,6 @@ function Set-VisualEffects {
 # --- 5. NETWORK OPTIMIZATION ---
 function Optimize-Network-Stack {
     Write-Host "Optimizing Network Stack (Registry & Netsh)..." -ForegroundColor Cyan
-    
-    # 1. Registry Tweaks (Basic)
     $RegistryPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile"
     Set-ItemProperty -Path $RegistryPath -Name "NetworkThrottlingIndex" -Value 0xFFFFFFFF -Type DWord -Force
     
@@ -310,5 +447,6 @@ Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to exit..."
+
 
 
