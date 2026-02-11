@@ -6,7 +6,7 @@
    Thahmid
 
 .VERSION
-   3.4A
+   3.5
 #>
 
 # --- PRE-FLIGHT CHECKS ---
@@ -39,7 +39,7 @@ if ($UserInput -eq 'n' -or $UserInput -eq 'N') {
 }
 
 # --- 1. SYSTEM SAFETY ---
-function Create-Restore-Point {
+function New-RestorePoint {
     Write-Host "Ensuring System Restore is enabled..." -ForegroundColor Cyan
     try {
         Set-Service -Name "sr" -StartupType Automatic -ErrorAction SilentlyContinue
@@ -397,7 +397,7 @@ function Disable-Tasks-Merged {
     Write-Host "Tasks disabled." -ForegroundColor Green
 }
 
-function Tweaks-And-Cleanup {
+function Invoke-FinalCleanup {
     Write-Host "Applying Final UI/UX Tweaks..." -ForegroundColor Cyan
     
     # Disable Mouse Accel
@@ -426,7 +426,7 @@ function Tweaks-And-Cleanup {
 }
 
 # --- EXECUTION ---
-Create-Restore-Point
+New-RestorePoint
 Disable-Telemetry-Complete
 Set-EdgePrivacy
 ForceRemoveEdge
@@ -438,7 +438,7 @@ Set-VisualEffects
 Optimize-Network-Stack
 Optimize-Adapters
 Disable-Tasks-Merged
-Tweaks-And-Cleanup
+Invoke-FinalCleanup
 
 Write-Host "==========================================================" -ForegroundColor Magenta
 Write-Host "   OPTIMIZATION COMPLETE! PLEASE RESTART YOUR PC NOW!     " -ForegroundColor Yellow
@@ -447,6 +447,3 @@ Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
 Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to exit..."
-
-
-
