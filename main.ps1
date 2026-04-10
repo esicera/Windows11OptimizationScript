@@ -6,7 +6,7 @@
    Thahmid
 
 .VERSION
-   3.5
+   3.5A
 #>
 
 # --- PRE-FLIGHT CHECKS ---
@@ -444,6 +444,5 @@ Write-Host "==========================================================" -Foregro
 Write-Host "   OPTIMIZATION COMPLETE! PLEASE RESTART YOUR PC NOW!     " -ForegroundColor Yellow
 Write-Host "==========================================================" -ForegroundColor Magenta
 Write-Host "FACE YOUR FEARSSS" -ForegroundColor Red
-Start-Process "https://t8xh.cc"
 
 Read-Host "Press Enter to exit..."
