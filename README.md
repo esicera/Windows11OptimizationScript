@@ -1,3 +1,5 @@
+# **Note this project will be archived for a new upcoming new optimization tool.**
+
 # 🛠️ Windows 11 Optimization Script (v3.0)
 
 A powerful, all-in-one PowerShell script designed to streamline, debloat, and optimize Windows 11 for maximum performance, privacy. Now integrated with advanced network and privacy modules.
